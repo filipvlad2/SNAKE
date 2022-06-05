@@ -12,7 +12,6 @@ let snakeHeadHeight = 10;
 
 let trail = [];
 let trailLength = 10;
-let objectTrail;
 
 let rightPressed = false;
 let leftPressed = false;
