@@ -13,14 +13,11 @@ let snakeHeadHeight = 10;
 let trail = [];
 let trailLength = 10;
 
-let rightPressed = false;
-let leftPressed = false;
-let upPressed = false;
-let downPressed = false;
+let keyPressed = null;
 
 let eatApple = false;
-let randomXPosition = Math.floor(Math.random() * (canvas.width - 25));
-let randomYPosition = Math.floor(Math.random() * (canvas.height - 25));
+let randomXPosition;
+let randomYPosition;
 let applesEaten = 0;
 
 
@@ -51,8 +48,31 @@ function randomizePos() {
 	randomYPosition = Math.floor(Math.random() * (canvas.height - 25));
 }
 
+//This function checks for self collision
+function checkSelfCollision(xPos, yPos) {
+	if ((xPos === x) &&  
+		(yPos === y) &&
+		trailLength > 10) {
+		gameOver();
+	}
+}
 
-function draw() {
+function checkBorderCollision(xPos, yPos) {
+	if (xPos + snakeHeadWidth > canvas.width) {
+		gameOver();
+	} else if (xPos < 0) {
+		gameOver();
+	} else if (yPos < 0) {
+		gameOver();
+	} else if (yPos + snakeHeadHeight > canvas.height) {
+		gameOver();
+	}
+}
+
+//Calling this function in order to generate the first apple
+randomizePos();
+
+function moveSnake() {
 	c.clearRect(0, 0, canvas.width, canvas.height);
 
 //Creates the tail of the snake, and verifies for collision with itself
@@ -60,11 +80,7 @@ function draw() {
 		c.fillStyle = '#00e600';
 		c.fillRect(trail[i].xPos, trail[i].yPos, snakeHeadWidth, snakeHeadHeight);
 
-		if ((trail[i].xPos === x) &&  
-			(trail[i].yPos === y) &&
-			trailLength > 10) {
-			gameOver();
-		}
+		checkSelfCollision(trail[i].xPos, trail[i].yPos);
 	}
 
 //Generates the apples
@@ -77,26 +93,22 @@ function draw() {
 	storeLastPosition(x, y);
 
 //Keeps track on the key pressed, and verifies for collision with the borders	
-	if (rightPressed) {
+	if (keyPressed === "Right") {
 		x += dx;
-		if (x + snakeHeadWidth > canvas.width) {
-			gameOver();
-		}
-	} else if (leftPressed) {
+		checkBorderCollision(x, y);
+
+	} else if (keyPressed === "Left") {
 		x -= dx;
-		if (x < 0) {
-			gameOver();
-		}
-	} else if (upPressed) {
+		checkBorderCollision(x, y);
+
+	} else if (keyPressed === "Up") {
 		y -= dy;
-		if (y < 0) {
-			gameOver();
-		}
-	} else if (downPressed) {
+		checkBorderCollision(x, y);
+
+	} else if (keyPressed === "Down") {
 		y += dy;
-		if (y + snakeHeadHeight > canvas.height) {
-			gameOver();
-		}
+		checkBorderCollision(x, y);
+
 	}
 
 //Keeps track on the apples, and verifies for collision with them
@@ -119,25 +131,17 @@ function draw() {
 document.addEventListener("keydown", keyDownHandler, false);
 function keyDownHandler(e) {
 	if (e.key == "Right" || e.key == "ArrowRight") {
-		rightPressed = true;
-		leftPressed = false;
-		upPressed = false;
-		downPressed = false;
+		keyPressed = "Right";
+
 	} else if (e.key == "Left" || e.key == "ArrowLeft") {
-		leftPressed = true;
-		rightPressed = false;
-		upPressed = false;
-		downPressed = false;
+		keyPressed = "Left";
+
 	} else if (e.key == "Up" || e.key == "ArrowUp") {
-		upPressed = true;
-		downPressed = false;
-		leftPressed = false;
-		rightPressed = false;
+		keyPressed = "Up";
+
 	} else if (e.key == "Down" || e.key == "ArrowDown") {
-		downPressed = true;
-		upPressed = false;
-		rightPressed = false;
-		leftPressed = false;
+		keyPressed = "Down";
+
 	}
 }
 
@@ -159,4 +163,4 @@ function drawScore() {
 	c.fillText("Score: " +applesEaten, 250, 10);
 }
 
-let interval = setInterval(draw, 15);
+let interval = setInterval(moveSnake, 15);
