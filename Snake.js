@@ -57,6 +57,7 @@ function checkSelfCollision(xPos, yPos) {
 	}
 }
 
+//This function checks if the snake collides with the borders
 function checkBorderCollision(xPos, yPos) {
 	if (xPos + snakeHeadWidth > canvas.width) {
 		gameOver();
