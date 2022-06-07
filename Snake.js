@@ -15,9 +15,8 @@ let trailLength = 10;
 
 let keyPressed = null;
 
+let appleX, appleY;
 let eatApple = false;
-let randomXPosition;
-let randomYPosition;
 let applesEaten = 0;
 
 
@@ -43,9 +42,8 @@ function generateRandomApples(appleX, appleY) {
 }
 
 //This function randomizes the coords for the apple
-function randomizePos() {
-	randomXPosition = Math.floor(Math.random() * (canvas.width - 25));
-	randomYPosition = Math.floor(Math.random() * (canvas.height - 25));
+function randomizePos(canvasSize) {
+	return Math.floor(Math.random() * (canvasSize - 25));
 }
 
 //This function checks for self collision
@@ -70,10 +68,12 @@ function checkBorderCollision(xPos, yPos) {
 	}
 }
 
-//Calling this function in order to generate the first apple
-randomizePos();
+//Setting a value to these two coordinates in order to generate the first apple
+	appleX = randomizePos(canvas.width);
+	appleY = randomizePos(canvas.height);
 
 function moveSnake() {
+
 	c.clearRect(0, 0, canvas.width, canvas.height);
 
 //Creates the tail of the snake, and verifies for collision with itself
@@ -86,7 +86,7 @@ function moveSnake() {
 
 //Generates the apples
 	if (eatApple === false) {
-		generateRandomApples(randomXPosition, randomYPosition);
+		generateRandomApples(appleX, appleY);
 	}
 
 	drawSnakeHead();
@@ -113,14 +113,15 @@ function moveSnake() {
 	}
 
 //Keeps track on the apples, and verifies for collision with them
-	if ((randomXPosition < x + snakeHeadWidth) && 
-		(randomXPosition + snakeHeadWidth > x) && 
-		(randomYPosition < y + snakeHeadHeight) && 
-		(snakeHeadHeight + randomYPosition > y)) {
+	if ((appleX < x + snakeHeadWidth) && 
+		(appleX + snakeHeadWidth > x) && 
+		(appleY < y + snakeHeadHeight) && 
+		(snakeHeadHeight + appleY > y)) {
 		eatApple = true;
 		applesEaten = applesEaten + 1;
 		trailLength = trailLength + 10;
-		randomizePos();
+		appleX = randomizePos(canvas.width);
+		appleY = randomizePos(canvas.height);
 		eatApple = false;
 	}
 
